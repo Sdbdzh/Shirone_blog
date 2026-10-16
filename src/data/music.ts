@@ -12,7 +12,7 @@ import type { TrackDescriptor } from "@/types/musicConfig";
  * - source: 音频文件地址（相对 /public 或绝对 URL）
  * - duration: 曲目时长（秒，可选）
  *
- * 注：封面与音频均已改为云端直链（fzsg.de5.net），本地 /public/music 仅作备用。
+ * 注：封面与音频均为云端直链（fzsg.de5.net）；本地 /public/music 副本已删除。
  */
 export const musicTracks: readonly TrackDescriptor[] = [
 	{
