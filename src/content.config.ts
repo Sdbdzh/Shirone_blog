@@ -2,14 +2,24 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
+/**
+ * 日期字段：同时接受 YAML 原生日期与字符串日期。
+ * Decap / Sveltia CMS 写回 frontmatter 时会给日期加引号，纯 z.date() 会报
+ * `Expected type "date", received "string"`，这里统一先转成 Date 再校验。
+ */
+const looseDate = (value: unknown) =>
+	typeof value === "string" || typeof value === "number"
+		? new Date(value)
+		: value;
+
 const postsCollection = defineCollection({
 	loader: glob({ base: "./src/content/posts", pattern: "**/*.{md,mdx}" }),
 	schema: z.object({
 		title: z.string(),
-		published: z.date(),
-		publishedAt: z.date().optional(),
-		updated: z.date().optional(),
-		updatedAt: z.date().optional(),
+		published: z.preprocess(looseDate, z.date()),
+		publishedAt: z.preprocess(looseDate, z.date()).optional(),
+		updated: z.preprocess(looseDate, z.date()).optional(),
+		updatedAt: z.preprocess(looseDate, z.date()).optional(),
 		pinned: z.boolean().optional().default(false),
 		draft: z.boolean().optional().default(false),
 		comment: z.boolean().optional().default(true),
@@ -71,7 +81,7 @@ const seriesCollection = defineCollection({
 const momentsCollection = defineCollection({
 	loader: glob({ base: "./src/content/moments", pattern: "**/*.md" }),
 	schema: z.object({
-		published: z.date(),
+		published: z.preprocess(looseDate, z.date()),
 		pinned: z.boolean().optional().default(false),
 		location: z.string().optional().default(""),
 		/** Mood icon (Iconify name, e.g. `material-symbols:sentiment-excited-outline-rounded`). */

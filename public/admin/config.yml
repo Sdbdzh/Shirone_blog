@@ -1,0 +1,120 @@
+# ---------------------------------------------------------------------------
+# Sveltia CMS 配置（与 Decap CMS 配置格式兼容）
+# 后台入口：https://你的域名/admin/
+# 保存/发布 = 直接 commit 到 main 分支，Cloudflare Pages 会自动重新构建上线
+#
+# 登录方式（二选一，默认走第一种，不需要额外部署任何东西）：
+#   1) Personal Access Token：打开 /admin/ 后点 “Sign In Using Access Token”，
+#      粘贴一个对该仓库有 contents 读写权限的 token 即可（推荐 fine-grained token，
+#      只勾选 Sdbdzh/Shirone_blog 这一个仓库的 Contents: Read and write）。
+#   2) GitHub OAuth：自己部署 sveltia-cms-auth Worker 后，把下面的 base_url
+#      打开并填成 Worker 地址。
+# ---------------------------------------------------------------------------
+
+backend:
+  name: github
+  repo: Sdbdzh/Shirone_blog
+  branch: main
+  # base_url: https://sveltia-cms-auth.<你的 workers 子域>.workers.dev
+
+site_url: https://blog-enik.de5.net/
+
+# 上传的图片会提交进仓库，部署时随站点一起发布
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+# 发布立即生效（不走草稿审核流）
+publish_mode: simple
+
+commit_messages:
+  create: "content: 新增 {{collection}} {{path}}"
+  update: "content: 更新 {{collection}} {{path}}"
+  delete: "content: 删除 {{collection}} {{path}}"
+
+collections:
+  # -------------------------------- 文章 --------------------------------
+  - name: posts
+    label: 文章
+    label_singular: 文章
+    folder: src/content/posts
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    # 文件名 = 默认网址：由标题生成，标题里带英文/拼音网址会更干净
+    slug: "{{slug}}"
+    summary: "{{title}}（{{published | date('YYYY-MM-DD')}}）"
+    sortable_fields: [published, title]
+    fields:
+      - { name: title, label: 标题, widget: string }
+      - name: published
+        label: 发布日期
+        widget: datetime
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        format: "YYYY-MM-DD"
+      - name: permalink
+        label: 自定义网址
+        widget: string
+        required: false
+        hint: 可留空；填了就用它当网址，例如 my-first-post
+      - name: description
+        label: 摘要
+        widget: text
+        required: false
+        hint: 列表页和搜索结果里显示的一两句话
+      - { name: image, label: 封面图, widget: image, required: false, choose_url: true }
+      - { name: category, label: 分类, widget: string, required: false }
+      - { name: tags, label: 标签, widget: list, required: false, default: [] }
+      - name: series
+        label: 所属系列
+        widget: string
+        required: false
+        hint: 系列 slug，留空表示不属于任何系列
+      - { name: draft, label: 草稿, widget: boolean, default: false, hint: 打开后不会出现在站点上 }
+      - { name: pinned, label: 置顶, widget: boolean, default: false }
+      - { name: comment, label: 允许评论, widget: boolean, default: true }
+      - { name: body, label: 正文, widget: markdown }
+
+  # -------------------------------- 动态 --------------------------------
+  - name: moments
+    label: 动态
+    label_singular: 动态
+    folder: src/content/moments
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    # 文件名约定：2026-10-18-名字.md
+    slug: "{{year}}-{{month}}-{{day}}-{{fields.name}}"
+    summary: "{{published | date('YYYY-MM-DD')}} · {{location}}"
+    sortable_fields: [published]
+    fields:
+      - name: published
+        label: 发布时间
+        widget: datetime
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        format: "YYYY-MM-DD"
+      - name: name
+        label: 文件名
+        widget: string
+        required: true
+        hint: 只用英文/数字/短横线，例如 late-night
+      - { name: location, label: 地点, widget: string, required: false }
+      - name: mood
+        label: 心情图标
+        widget: string
+        required: false
+        hint: Iconify 名称，如 material-symbols:sentiment-excited-outline-rounded
+      - { name: tags, label: 标签, widget: list, required: false, default: [] }
+      - name: images
+        label: 图片
+        widget: list
+        required: false
+        default: []
+        fields:
+          - { name: src, label: 图片, widget: image, choose_url: true }
+          - { name: alt, label: 说明, widget: string, required: false }
+      - { name: draft, label: 草稿, widget: boolean, default: false }
+      - { name: body, label: 正文, widget: markdown }
