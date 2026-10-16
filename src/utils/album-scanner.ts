@@ -39,6 +39,18 @@ function stringArray(value: unknown): string[] {
 		: [];
 }
 
+/**
+ * 把后台「图片链接」文本框的内容拆成链接数组。
+ * 支持换行、空格、中英文逗号／顿号分隔，方便一次性粘贴一整批云端图片。
+ */
+function parseUrlList(value: unknown): string[] {
+	if (typeof value !== "string") return stringArray(value);
+	return value
+		.split(/[\s,，、]+/)
+		.map((item) => item.trim())
+		.filter(Boolean);
+}
+
 function numberValue(value: unknown): number | undefined {
 	return typeof value === "number" && Number.isFinite(value) && value > 0
 		? value
@@ -160,10 +172,28 @@ function externalPhotos(albumId: string, rawPhotos: unknown): AlbumPhoto[] {
 }
 
 /**
+ * 批量粘贴的图片链接 → 相册照片（对应后台「图片链接」文本框 photoUrls）。
+ */
+function urlPhotos(albumId: string, urls: string[], offset = 0): AlbumPhoto[] {
+	return urls.map((src, index) => {
+		const position = offset + index + 1;
+		return {
+			id: `${albumId}-photo-${position}`,
+			src,
+			alt: `Photo ${position}`,
+			tags: [],
+			date: DEFAULT_DATE,
+		};
+	});
+}
+
+/**
  * 组装单个相册。
  * - albumDir 非空：目录形态（public/images/albums/<id>/info.json）。
  * - albumDir 为 null：扁平描述文件形态（public/images/albums/<id>.json，
  *   由后台 /admin/ 的「相册」页面生成），强制走 external 模式，照片只从 photos[] 取。
+ * - 两种形态都支持 photoUrls：一段换行/空格/逗号分隔的图片链接文本，
+ *   会被自动拆成照片追加到相册末尾（未填 cover 时用第一张链接当封面）。
  */
 function buildAlbum(
 	id: string,
@@ -171,9 +201,11 @@ function buildAlbum(
 	albumDir: string | null,
 ): AlbumGroup | null {
 	const external = albumDir === null || raw.mode === "external";
+	// 后台「图片链接」文本框：一次粘贴一整批云端图片，自动拆成照片。
+	const inlineUrls = external ? parseUrlList(raw.photoUrls) : [];
 	let cover = "";
 	if (external) {
-		cover = stringValue(raw.cover);
+		cover = stringValue(raw.cover) || inlineUrls[0] || "";
 	} else if (albumDir !== null) {
 		if (fs.existsSync(path.join(albumDir, "cover.webp"))) {
 			cover = toPublicPath(`${id}/cover.webp`);
@@ -191,6 +223,15 @@ function buildAlbum(
 			: external
 				? externalPhotos(id, raw.photos)
 				: localPhotos(id, albumDir);
+	if (inlineUrls.length > 0) {
+		const known = new Set(photos.map((photo) => photo.src));
+		const extra = inlineUrls.filter((src) => {
+			if (known.has(src)) return false;
+			known.add(src);
+			return true;
+		});
+		photos.push(...urlPhotos(id, extra, photos.length));
+	}
 	return {
 		id,
 		title: stringValue(raw.title, id),

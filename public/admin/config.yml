@@ -228,7 +228,7 @@ collections:
       - { name: slug, label: 相册 ID, widget: string, hint: 英文/数字，决定文件名与网址，例如 japan-2026 }
       - { name: title, label: 相册标题, widget: string }
       - { name: description, label: 描述, widget: text, required: false }
-      - { name: cover, label: 封面, widget: image, choose_url: true }
+      - { name: cover, label: 封面, widget: image, required: false, choose_url: true, hint: 可留空；用「图片链接」批量粘贴时自动取第一张 }
       - name: date
         label: 日期
         widget: datetime
@@ -263,8 +263,13 @@ collections:
           - { label: 图片链接（在下方「照片」里填 URL）, value: external }
         default: external
         required: false
+      - name: photoUrls
+        label: 图片链接（批量粘贴）
+        widget: text
+        required: false
+        hint: 一次把整批链接粘进来：一行一个，也可以用空格或逗号分隔；保存后自动变成相册照片，不用逐张加。
       - name: photos
-        label: 照片
+        label: 照片（需要单独写标题/说明时才用）
         widget: list
         required: false
         default: []
