@@ -1,0 +1,14 @@
+{
+	// Cloudflare Workers 静态资源部署配置。
+	// 用于「Workers 连接 Git 自动构建」：先跑 pnpm build 生成 dist/，再由 npx wrangler deploy 上传。
+	// 注意：name 必须与 Cloudflare 上已有的 Worker 名称一致，否则会新建一个 Worker（访问地址也会变）。
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "shironeblog",
+	"compatibility_date": "2026-10-01",
+	"assets": {
+		// Astro 的产物目录
+		"directory": "./dist",
+		// 站点自带 404.html，命中不存在的路径时直接返回它
+		"not_found_handling": "404-page"
+	}
+}
