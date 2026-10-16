@@ -2,7 +2,8 @@
  * 番剧收藏数据（本地数据源）。
  * 用于番剧页：src/pages/anime.astro → organisms/AnimeSection → molecules/AnimeCard。
  *
- * 添加条目：在 animeData 中追加一项即可，状态筛选 chips 与计数自动生成。
+ * 数据本体在 `src/data/anime.json`（后台 /admin/ 的「番剧」页面直接编辑），
+ * 本文件只做一层薄封装，保持原有导出接口不变。
  * - cover 省略时卡片显示主题色渐变占位（补图前不破版）；
  * - link 省略时封面不可点；rating 为 0-10 个人评分；
  * - progress 是结构化追番进度，watching 状态在卡片上渲染进度条。
@@ -10,6 +11,7 @@
  */
 
 import type { AnimeIdentity } from "../types/animeConfig.ts";
+import raw from "./anime.json";
 
 /** 收藏状态（Bangumi 领域通行五态） */
 export type AnimeStatus =
@@ -44,4 +46,4 @@ export interface AnimeItem {
 	identity?: AnimeIdentity;
 }
 
-export const animeData: AnimeItem[] = [];
+export const animeData: AnimeItem[] = raw.items as AnimeItem[];

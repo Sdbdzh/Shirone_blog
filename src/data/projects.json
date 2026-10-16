@@ -1,0 +1,15 @@
+{
+	"categories": [
+		{
+			"key": "theme",
+			"label": "Theme",
+			"icon": "material-symbols:palette-outline-rounded"
+		},
+		{
+			"key": "android",
+			"label": "Android",
+			"icon": "material-symbols:android-rounded"
+		}
+	],
+	"items": []
+}

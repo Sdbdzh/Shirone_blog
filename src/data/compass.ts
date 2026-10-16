@@ -1,12 +1,16 @@
 /**
  * 站点罗盘数据（本地数据源）。
  * 用途：src/pages/compass.astro → organisms/CompassSection → molecules/CompassTile。
- * 添加站点：往对应 Shelf.entries 追加一项；数组顺序即展示顺序。
+ *
+ * 数据本体在 `src/data/compass.json`（后台 /admin/ 的「站点罗盘」页面直接编辑），
+ * 本文件只做一层薄封装，保持原有导出接口不变。
+ * 数组顺序即展示顺序。
  * - icon：Iconify 名（material-symbols:xxx）或图片 URL（http(s)/绝对路径）；
  *   省略时瓷砖显示 label 首字母 tonal 块（不自动抓取 favicon）。
  * - image：用户自定义图片 URL（http(s)/绝对路径），优先于 icon 渲染；
  *   加载失败自动降级为首字母块。
  */
+import raw from "./compass.json";
 
 /** 单条站点记录 */
 export interface CompassEntry {
@@ -35,4 +39,4 @@ export interface CompassShelf {
 	entries: CompassEntry[];
 }
 
-export const compassData: CompassShelf[] = [];
+export const compassData: CompassShelf[] = raw.shelves as CompassShelf[];

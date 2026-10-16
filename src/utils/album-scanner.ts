@@ -159,30 +159,38 @@ function externalPhotos(albumId: string, rawPhotos: unknown): AlbumPhoto[] {
 	});
 }
 
-function scanAlbumDirectory(entry: fs.Dirent): AlbumGroup | null {
-	if (!entry.isDirectory()) return null;
-	const id = entry.name;
-	const albumDir = path.join(ALBUM_ROOT, id);
-	const raw = readJson(path.join(albumDir, "info.json"));
-	if (!raw) {
-		console.warn(`[albums] Skipping ${id}: info.json is missing or invalid`);
-		return null;
+/**
+ * 组装单个相册。
+ * - albumDir 非空：目录形态（public/images/albums/<id>/info.json）。
+ * - albumDir 为 null：扁平描述文件形态（public/images/albums/<id>.json，
+ *   由后台 /admin/ 的「相册」页面生成），强制走 external 模式，照片只从 photos[] 取。
+ */
+function buildAlbum(
+	id: string,
+	raw: RawAlbum,
+	albumDir: string | null,
+): AlbumGroup | null {
+	const external = albumDir === null || raw.mode === "external";
+	let cover = "";
+	if (external) {
+		cover = stringValue(raw.cover);
+	} else if (albumDir !== null) {
+		if (fs.existsSync(path.join(albumDir, "cover.webp"))) {
+			cover = toPublicPath(`${id}/cover.webp`);
+		} else if (fs.existsSync(path.join(albumDir, "cover.jpg"))) {
+			cover = toPublicPath(`${id}/cover.jpg`);
+		}
 	}
-	const external = raw.mode === "external";
-	const cover = external
-		? stringValue(raw.cover)
-		: fs.existsSync(path.join(albumDir, "cover.webp"))
-			? toPublicPath(`${id}/cover.webp`)
-			: fs.existsSync(path.join(albumDir, "cover.jpg"))
-				? toPublicPath(`${id}/cover.jpg`)
-				: "";
 	if (!cover) {
 		console.warn(`[albums] Skipping ${id}: cover is missing`);
 		return null;
 	}
-	const photos = external
-		? externalPhotos(id, raw.photos)
-		: localPhotos(id, albumDir);
+	const photos =
+		albumDir === null
+			? externalPhotos(id, raw.photos)
+			: external
+				? externalPhotos(id, raw.photos)
+				: localPhotos(id, albumDir);
 	return {
 		id,
 		title: stringValue(raw.title, id),
@@ -200,11 +208,41 @@ function scanAlbumDirectory(entry: fs.Dirent): AlbumGroup | null {
 	};
 }
 
+/** 目录形态：public/images/albums/<id>/info.json（照片可直接放进该目录）。 */
+function scanAlbumDirectory(entry: fs.Dirent): AlbumGroup | null {
+	if (!entry.isDirectory()) return null;
+	const id = entry.name;
+	const albumDir = path.join(ALBUM_ROOT, id);
+	const raw = readJson(path.join(albumDir, "info.json"));
+	if (!raw) {
+		console.warn(`[albums] Skipping ${id}: info.json is missing or invalid`);
+		return null;
+	}
+	return buildAlbum(id, raw, albumDir);
+}
+
+/** 扁平形态：public/images/albums/<id>.json（后台 /admin/ 生成的相册描述文件）。 */
+function scanAlbumDescriptor(entry: fs.Dirent): AlbumGroup | null {
+	if (!entry.isFile() || !entry.name.toLowerCase().endsWith(".json")) return null;
+	const id = path.basename(entry.name, path.extname(entry.name));
+	if (id.toLowerCase() === "info") return null;
+	const raw = readJson(path.join(ALBUM_ROOT, entry.name));
+	if (!raw) {
+		console.warn(`[albums] Skipping ${id}: album json is invalid`);
+		return null;
+	}
+	return buildAlbum(id, raw, null);
+}
+
 export function scanAllAlbums(): AlbumGroup[] {
 	if (!fs.existsSync(ALBUM_ROOT)) return [];
 	return fs
 		.readdirSync(ALBUM_ROOT, { withFileTypes: true })
-		.map(scanAlbumDirectory)
+		.map((entry) =>
+			entry.isDirectory()
+				? scanAlbumDirectory(entry)
+				: scanAlbumDescriptor(entry),
+		)
 		.filter((album): album is AlbumGroup => album !== null)
 		.sort(
 			(a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title),

@@ -118,3 +118,334 @@ collections:
           - { name: alt, label: 说明, widget: string, required: false }
       - { name: draft, label: 草稿, widget: boolean, default: false }
       - { name: body, label: 正文, widget: markdown }
+
+  # -------------------------------- 友链 --------------------------------
+  - name: friends
+    label: 友链
+    files:
+      - name: list
+        label: 友链列表
+        file: src/data/friends.json
+        format: json
+        fields:
+          - name: items
+            label: 友链
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: id, label: 序号, widget: number, value_type: int, default: 1, required: false, hint: 只用于内部排序，随便填数字即可 }
+              - { name: title, label: 站点名, widget: string }
+              - { name: siteurl, label: 站点地址, widget: string }
+              - { name: imgurl, label: 头像 / 图片地址, widget: image, choose_url: true }
+              - { name: desc, label: 简介, widget: text, required: false }
+              - { name: tags, label: 标签, widget: list, required: false, default: [] }
+
+  # -------------------------------- 番剧 --------------------------------
+  - name: anime
+    label: 番剧
+    files:
+      - name: list
+        label: 番剧列表
+        file: src/data/anime.json
+        format: json
+        fields:
+          - name: items
+            label: 番剧
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: title, label: 番剧名, widget: string }
+              - name: status
+                label: 观看状态
+                widget: select
+                options:
+                  - { label: 在看, value: watching }
+                  - { label: 看完, value: completed }
+                  - { label: 想看, value: planned }
+                  - { label: 搁置, value: onHold }
+                  - { label: 弃番, value: dropped }
+                default: planned
+              - { name: rating, label: 评分（0-10）, widget: number, value_type: float, min: 0, max: 10, default: 0, required: false }
+              - { name: year, label: 放送年份, widget: string, required: false }
+              - { name: cover, label: 封面, widget: image, required: false, choose_url: true }
+              - { name: link, label: 条目链接, widget: string, required: false }
+              - { name: studio, label: 制作公司, widget: string, required: false }
+              - { name: genres, label: 题材标签, widget: list, required: false, default: [] }
+              - { name: description, label: 一句话感想, widget: text, required: false }
+              - name: progress
+                label: 追番进度
+                widget: object
+                required: false
+                fields:
+                  - { name: watched, label: 已看集数, widget: number, value_type: int, default: 0 }
+                  - { name: total, label: 总集数, widget: number, value_type: int, default: 0 }
+
+  # ------------------------------ 站点罗盘 ------------------------------
+  - name: compass
+    label: 站点罗盘
+    files:
+      - name: list
+        label: 罗盘分组
+        file: src/data/compass.json
+        format: json
+        fields:
+          - name: shelves
+            label: 分组
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { name: key, label: 分组 ID, widget: string, hint: 英文/数字，用作页面锚点 }
+              - { name: name, label: 分组名, widget: string }
+              - { name: icon, label: 分组图标, widget: string, required: false, hint: "Iconify 名，如 material-symbols:bookmark-outline-rounded" }
+              - { name: blurb, label: 分组说明, widget: string, required: false }
+              - name: entries
+                label: 站点
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: label, label: 站点名, widget: string }
+                  - { name: href, label: 链接, widget: string }
+                  - { name: note, label: 一句话说明, widget: string, required: false }
+                  - { name: icon, label: 图标, widget: string, required: false, hint: "Iconify 名；留空则显示首字母" }
+                  - { name: image, label: 图片, widget: image, required: false, choose_url: true }
+
+  # -------------------------------- 相册 --------------------------------
+  - name: albums
+    label: 相册
+    label_singular: 相册
+    folder: public/images/albums
+    create: true
+    delete: true
+    identifier_field: slug
+    slug: "{{fields.slug}}"
+    extension: json
+    format: json
+    media_folder: public/images/albums
+    public_folder: /images/albums
+    summary: "{{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - { name: slug, label: 相册 ID, widget: string, hint: 英文/数字，决定文件名与网址，例如 japan-2026 }
+      - { name: title, label: 相册标题, widget: string }
+      - { name: description, label: 描述, widget: text, required: false }
+      - { name: cover, label: 封面, widget: image, choose_url: true }
+      - name: date
+        label: 日期
+        widget: datetime
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        format: "YYYY-MM-DD"
+        default: "{{now}}"
+      - { name: location, label: 地点, widget: string, required: false }
+      - { name: tags, label: 标签, widget: list, required: false, default: [] }
+      - name: layout
+        label: 布局
+        widget: select
+        options:
+          - { label: 瀑布流, value: masonry }
+          - { label: 网格, value: grid }
+        default: masonry
+      - name: columns
+        label: 列数
+        widget: select
+        options:
+          - { label: "2 列", value: 2 }
+          - { label: "3 列", value: 3 }
+          - { label: "4 列", value: 4 }
+        default: 3
+      - { name: hidden, label: 在列表页隐藏, widget: boolean, default: false }
+      - { name: password, label: 访问密码, widget: string, required: false, hint: 留空 = 不加密 }
+      - { name: passwordHint, label: 密码提示, widget: string, required: false }
+      - name: mode
+        label: 照片来源
+        widget: select
+        options:
+          - { label: 图片链接（在下方「照片」里填 URL）, value: external }
+        default: external
+        required: false
+      - name: photos
+        label: 照片
+        widget: list
+        required: false
+        default: []
+        summary: "{{fields.title}}"
+        fields:
+          - { name: src, label: 图片, widget: image, choose_url: true }
+          - { name: title, label: 标题, widget: string, required: false }
+          - { name: alt, label: 替代文本, widget: string, required: false }
+          - { name: description, label: 说明, widget: text, required: false }
+          - { name: date, label: 拍摄日期, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD", required: false }
+          - { name: location, label: 地点, widget: string, required: false }
+          - { name: tags, label: 标签, widget: list, required: false, default: [] }
+
+  # -------------------------------- 项目 --------------------------------
+  - name: projects
+    label: 项目
+    files:
+      - name: data
+        label: 项目数据
+        file: src/data/projects.json
+        format: json
+        fields:
+          - name: categories
+            label: 分类（页面顶部筛选，顺序即显示顺序）
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { name: key, label: 分类 ID, widget: string, hint: 英文/数字，条目的「分类」填这个 }
+              - { name: label, label: 显示名称, widget: string }
+              - { name: icon, label: 图标, widget: string, required: false, hint: "Iconify 名，如 material-symbols:palette-outline-rounded" }
+          - name: items
+            label: 项目
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: key, label: 项目 ID, widget: string, hint: 英文/数字，稳定标识 }
+              - { name: title, label: 标题, widget: string }
+              - { name: summary, label: 简介, widget: text }
+              - { name: category, label: 分类, widget: string, hint: 填上面某个分类的「分类 ID」 }
+              - name: phase
+                label: 阶段
+                widget: select
+                options:
+                  - { label: 已发布, value: shipped }
+                  - { label: 开发中, value: building }
+                  - { label: 探索中, value: exploring }
+                default: building
+              - { name: technologies, label: 技术栈, widget: list, default: [] }
+              - { name: icon, label: 图标, widget: string, required: false, hint: "Iconify 名；与封面二选一" }
+              - { name: cover, label: 封面, widget: image, required: false, choose_url: true }
+              - { name: coverAlt, label: 封面说明, widget: string, required: false }
+              - { name: featured, label: 重点展示, widget: boolean, default: false, required: false }
+              - { name: website, label: 网站链接, widget: string, required: false }
+              - { name: repository, label: 仓库链接, widget: string, required: false }
+              - { name: year, label: 年份, widget: string, required: false }
+
+  # ------------------------------ 我的设备 ------------------------------
+  - name: devices
+    label: 我的设备
+    files:
+      - name: data
+        label: 设备数据
+        file: src/data/devices.json
+        format: json
+        fields:
+          - name: categories
+            label: 场景分类（页面顶部筛选，顺序即显示顺序）
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { name: key, label: 分类 ID, widget: string, hint: 英文/数字，设备的「分类」填这个 }
+              - { name: label, label: 显示名称, widget: string }
+              - { name: icon, label: 图标, widget: string, required: false, hint: "Iconify 名" }
+              - { name: description, label: 分类说明, widget: string, required: false }
+          - name: items
+            label: 设备
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { name: id, label: 设备 ID, widget: string, hint: 英文/数字，稳定标识 }
+              - { name: name, label: 名称, widget: string }
+              - { name: brand, label: 品牌, widget: string }
+              - { name: category, label: 分类, widget: string, hint: 填上面某个分类的「分类 ID」 }
+              - name: status
+                label: 状态
+                widget: select
+                options:
+                  - { label: 在用, value: active }
+                  - { label: 备用, value: backup }
+                  - { label: 已归档, value: archived }
+                  - { label: 想买, value: wishlist }
+                default: active
+              - { name: specs, label: 核心规格, widget: string, hint: 如 M3 Max / 64GB / 2TB }
+              - { name: specDetails, label: 详细规格, widget: list, required: false, default: [], fields: [{ name: key, label: 键, widget: string }, { name: label, label: 名称, widget: string }, { name: value, label: 值, widget: string }] }
+              - { name: description, label: 使用感受, widget: text }
+              - { name: image, label: 图片, widget: image, required: false, choose_url: true }
+              - { name: icon, label: 图标, widget: string, required: false, hint: "Iconify 名；无图片时显示" }
+              - { name: link, label: 链接, widget: string, required: false }
+              - { name: featured, label: 主力设备, widget: boolean, default: false, required: false }
+              - { name: year, label: 年份, widget: string, required: false }
+
+  # -------------------------------- 游戏 --------------------------------
+  - name: games
+    label: 游戏
+    files:
+      - name: data
+        label: 游戏数据
+        file: src/data/games.json
+        format: json
+        fields:
+          - name: categories
+            label: 分类（页面顶部筛选，顺序即显示顺序）
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { name: key, label: 分类 ID, widget: string, hint: 英文/数字，游戏的「分类」填这个 }
+              - { name: label, label: 显示名称, widget: string }
+              - { name: icon, label: 图标, widget: string, required: false, hint: "Iconify 名" }
+              - { name: description, label: 分类说明, widget: string, required: false }
+          - name: items
+            label: 游戏
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { name: id, label: 游戏 ID, widget: string, hint: 英文/数字，稳定标识 }
+              - { name: name, label: 游戏名, widget: string }
+              - { name: developer, label: 开发商, widget: string }
+              - { name: category, label: 分类, widget: string, hint: 填上面某个分类的「分类 ID」 }
+              - name: status
+                label: 状态
+                widget: select
+                options:
+                  - { label: 在玩, value: playing }
+                  - { label: 通关, value: completed }
+                  - { label: 想玩, value: backlog }
+                  - { label: 愿望单, value: wishlist }
+                default: backlog
+              - { name: cover, label: 横版封面, widget: image, required: false, choose_url: true }
+              - { name: icon, label: 图标, widget: string, required: false, hint: "Iconify 名；无封面时显示" }
+              - { name: rating, label: 评分（0-5）, widget: number, value_type: float, min: 0, max: 5, required: false }
+              - { name: hours, label: 时长（小时）, widget: number, value_type: float, required: false }
+              - { name: platform, label: 平台, widget: string, required: false, hint: 如 PC / PlayStation / Switch }
+              - { name: year, label: 发行年份, widget: string, required: false }
+              - { name: tags, label: 标签, widget: list, required: false, default: [] }
+              - { name: description, label: 简评, widget: text }
+              - { name: link, label: 链接, widget: string, required: false }
+              - { name: featured, label: 特别推荐, widget: boolean, default: false, required: false }
+
+  # -------------------------------- 技能 --------------------------------
+  - name: skills
+    label: 技能
+    files:
+      - name: data
+        label: 技能数据
+        file: src/data/skills.json
+        format: json
+        fields:
+          - name: categories
+            label: 分类（页面顶部筛选，顺序即显示顺序）
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { name: key, label: 分类 ID, widget: string, hint: 英文/数字，技能的「分类」填这个 }
+              - { name: label, label: 显示名称, widget: string }
+              - { name: icon, label: 图标, widget: string, required: false, hint: "Iconify 名" }
+          - name: items
+            label: 技能
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { name: name, label: 技能名, widget: string }
+              - { name: description, label: 描述, widget: string, required: false }
+              - { name: icon, label: 图标, widget: string, required: false, hint: "Iconify 名" }
+              - { name: category, label: 分类, widget: string, hint: 填上面某个分类的「分类 ID」 }
+              - name: level
+                label: 熟练度
+                widget: select
+                options:
+                  - { label: 入门, value: beginner }
+                  - { label: 熟练, value: intermediate }
+                  - { label: 精通, value: advanced }
+                  - { label: 专家, value: expert }
+                default: intermediate
+              - { name: enable, label: 启用, widget: boolean, default: true, required: false }

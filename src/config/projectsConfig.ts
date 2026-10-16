@@ -1,5 +1,6 @@
 import type { ProjectsConfig } from "@/types/projectsConfig";
 import { withUserConfig } from "../utils/config-overlay.ts";
+import raw from "../data/projects.json";
 
 /**
  * 项目页行为与展示配置。
@@ -9,23 +10,13 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  * - categories：筛选分类清单（数组顺序即页面顶部 Chips 顺序）；
  * - disabledKeys：可选被禁用的项目 key 列表（例如 ["folkpatch"]）；
  *
- * 注：项目的具体内容数据（标题、描述、技术栈、链接、封面等）请在 `src/data/projects.ts` 中维护。
+ * 注：分类清单与项目条目都已放到 `src/data/projects.json`，
+ * 后台 /admin/ 的「项目」页面可直接增删改（categories 与 items）。
  */
 export const projectsConfig: ProjectsConfig = withUserConfig("projects", {
 	enable: true,
 	title: "$t:projects",
 	description: "$t:projectsBanner",
-	categories: [
-		{
-			key: "theme",
-			label: "Theme",
-			icon: "material-symbols:palette-outline-rounded",
-		},
-		{
-			key: "android",
-			label: "Android",
-			icon: "material-symbols:android-rounded",
-		},
-	],
+	categories: raw.categories,
 	// disabledKeys: [],
 });

@@ -2,9 +2,13 @@
  * 友情链接数据配置（结构与 Mizuki 同款，便于互相迁移）。
  * 用于管理友情链接页面的数据：src/pages/friends.astro → organisms/FriendSection。
  *
- * 添加友链：在 friendsData 中追加一项即可，页面 / 筛选标签自动生成。
- * tags 会聚合为页面顶部的筛选 chip（OR 命中：选中多个标签时命中任一即显示）。
+ * 数据本体在 `src/data/friends.json`（后台 /admin/ 的「友链」页面直接编辑），
+ * 本文件只做一层薄封装，保持原有导出接口不变。
+ * 页面 / 筛选标签会自动生成；tags 会聚合为页面顶部的筛选 chip
+ * （OR 命中：选中多个标签时命中任一即显示）。
  */
+import raw from "./friends.json";
+
 export interface FriendItem {
 	id: number;
 	title: string;
@@ -15,7 +19,7 @@ export interface FriendItem {
 }
 
 // 友情链接数据
-export const friendsData: FriendItem[] = [];
+export const friendsData: FriendItem[] = raw.items as FriendItem[];
 
 // 获取所有友情链接数据（稳定顺序，测试可复现）
 export function getFriendsList(): FriendItem[] {
