@@ -6,7 +6,8 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  * 类型见 src/types/config.ts。
  */
 export const profileConfig: ProfileConfig = withUserConfig("profile", {
-	avatar: "assets/images/avatar.jpg", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
+	avatar:
+		"https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADJGrSf-lPeRWOLuDqPYH7pfVcPO7-AAJuGmsb1TaYVgABee6D7UWwVgEAAwIAA3gAAz0E.jpg", // 云端直链；本地相对 /src 路径、以 '/' 开头的 public 路径同样可用
 	name: "Enik",
 	bio: "性染色体:XY | 初三牲 | АДЛИН循环中 | 折腾X86比写作业积极 | C#&py半吊子 | 大部分时间在听，偶尔想说点什么 | 夜行生物，白天靠电脑续命",
 	links: [

@@ -58,18 +58,18 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		// 数组顺序就是轮播顺序；只需要静态 Banner 时，每组保留一张图片即可。
 		src: {
 			desktop: [
-				"assets/images/background-atri.png",
-				"assets/images/background-atri-a33cef.jpg",
-				"assets/images/background-atri-ATRI.webp",
-				"assets/images/background-atri-p2913225716.webp",
-				"assets/images/background-atri-p2913778885.webp",
+				"https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADCGrSTewRHsxS3DiTkXYjvDQE_sx3AAJJGmsb1TaYVt_UAAHCpHR41QEAAwIAA3cAAz0E.jpg",
+				"https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADB2rSTeY8POFncFlrIDs5oW2K9U-gAAJIGmsb1TaYVuo-4QjiWF0aAQADAgADeQADPQQ.webp",
+				"https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADBmrSTeR1WbE78kYj-vozrG2EfL8cAAJHGmsb1TaYVoa7sPt8dGsOAQADAgADeQADPQQ.webp",
+				"https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADBWrSTeTxtgTG9bV7-GOlXA1ao2doAAJGGmsb1TaYVs9R_omzeeXZAQADAgADeQADPQQ.webp",
+				"https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADA2rSTA0G1vbTnWLcUvOqFNBwCJc9AAJFGmsb1TaYVsnwzoKoJv0xAQADAgADdwADPQQ.png",
 			],
 			mobile: [
-				"assets/images/background-atri.png",
-				"assets/images/background-atri-a33cef.jpg",
-				"assets/images/background-atri-ATRI.webp",
-				"assets/images/background-atri-p2913225716.webp",
-				"assets/images/background-atri-p2913778885.webp",
+				"https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADCGrSTewRHsxS3DiTkXYjvDQE_sx3AAJJGmsb1TaYVt_UAAHCpHR41QEAAwIAA3cAAz0E.jpg",
+				"https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADB2rSTeY8POFncFlrIDs5oW2K9U-gAAJIGmsb1TaYVuo-4QjiWF0aAQADAgADeQADPQQ.webp",
+				"https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADBmrSTeR1WbE78kYj-vozrG2EfL8cAAJHGmsb1TaYVoa7sPt8dGsOAQADAgADeQADPQQ.webp",
+				"https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADBWrSTeTxtgTG9bV7-GOlXA1ao2doAAJGGmsb1TaYVs9R_omzeeXZAQADAgADeQADPQQ.webp",
+				"https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADA2rSTA0G1vbTnWLcUvOqFNBwCJc9AAJFGmsb1TaYVsnwzoKoJv0xAQADAgADdwADPQQ.png",
 			],
 		},
 		// 图片裁切焦点："top"、"center" 或 "bottom"。
