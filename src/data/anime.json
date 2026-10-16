@@ -1,3 +1,20 @@
 {
-	"items": []
+  "items": [
+    {
+      "title": "《ATRI -My Dear Moments-》",
+      "status": "onHold",
+      "rating": 10,
+      "year": "2020年6月19日",
+      "cover": "https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADJWrSmYq5CJkJ6chFVrwSo0VRc7aqAAJxGmsb1TaYVl0FHhoB--dzAQADAgADeAADPQQ.jpg",
+      "link": "",
+      "studio": "FrontWing、枕、ANIPLEX.EXE",
+      "genres": [
+        "atri",
+        "亚托利",
+        "galgame"
+      ],
+      "description": "亚托莉拥有不幸的过去。她实际上拥有自我意识和情感，是技术奇点",
+      "progress": null
+    }
+  ]
 }
