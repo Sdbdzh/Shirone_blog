@@ -14,7 +14,6 @@ draft: false
 
 > _10 月 16 日傍晚六点半，我把 Shirone 的仓库 fork 下来，准备做个博客。当时以为装个依赖、改改配置就完事了。_
 
-
 **第一个坑在 git 上。二十三点四十八分做完第一次提交，但推不上去，报的一直是网络握手失败，中间换过三条代理链路，一条都没通。**
 
 **快到十二点发现还有更麻烦的事：图片和音乐没有地方放。二十三点三十一分，又去 fork 了一个叫 Telegraph-Image 的图床项目，同样丢在 Cloudflare 上，绑到自己的域名。**
@@ -30,5 +29,7 @@ draft: false
 **建这个站是想给自己留个地方放东西。以前总觉得要等写得足够多、足够好才配有个站，后来发现先有个地方更重要。**
 
 **就这样，第一版先跑起来。**
+
+![](https://fzsg.de5.net/file/AgACAgUAAyEGAAMBBRtihQADOWrS98HR5jpW2iu4F87u8T3Q7jYKAAK6HGsb1TaYVqZofua1vnbgAQADAgADdwADPQQ.png)
 
 > *欢迎访问：*[我的blog](https://blog-enik.de5.net/)
