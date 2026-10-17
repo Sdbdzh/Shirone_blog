@@ -6,6 +6,7 @@ import {
 	validatePublicationMetadata,
 } from "@utils/content-date";
 import { siteMarkdownProcessor } from "@utils/markdown-processor";
+import { getDefaultMomentLocation } from "@utils/moment-locations";
 import { initPostIdMap } from "@utils/permalink-utils";
 import {
 	findUnknownSeriesSlugs,
@@ -264,7 +265,7 @@ export async function getSortedMoments(): Promise<MomentItem[]> {
 				published: new Date(entry.data.published).toISOString(),
 				html: code,
 				pinned: entry.data.pinned,
-				location: entry.data.location,
+				location: entry.data.location || getDefaultMomentLocation(),
 				mood: entry.data.mood,
 				tags: entry.data.tags,
 				images: entry.data.images.map(withMomentThumbnails),

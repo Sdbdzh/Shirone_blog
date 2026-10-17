@@ -101,7 +101,15 @@ collections:
         widget: string
         required: true
         hint: 只用英文/数字/短横线，例如 late-night
-      - { name: location, label: 地点, widget: string, required: false }
+      - name: location
+        label: 地点
+        widget: relation
+        collection: locations
+        value_field: name
+        display_fields: [name]
+        search_fields: [name]
+        required: false
+        hint: 下拉里直接选；留空就用「动态地点」里勾了「设为默认地点」的那个
       - name: mood
         label: 心情图标
         widget: string
@@ -454,3 +462,31 @@ collections:
                   - { label: 专家, value: expert }
                 default: intermediate
               - { name: enable, label: 启用, widget: boolean, default: true, required: false }
+
+  # ------------------------------ 动态地点 ------------------------------
+  # 写动态时「地点」下拉的选项来源；勾了「设为默认地点」的那个，会在动态没填地点时自动补上。
+  - name: locations
+    label: 动态地点
+    label_singular: 地点
+    folder: src/data/locations
+    create: true
+    delete: true
+    extension: json
+    format: json
+    slug: "{{fields.key}}"
+    identifier_field: key
+    summary: "{{name}}"
+    fields:
+      - name: key
+        label: 文件标识
+        widget: string
+        hint: 英文/数字/短横线，只当文件名用，不会显示在网站上
+      - name: name
+        label: 地点名称
+        widget: string
+        hint: 显示在动态里的名字，比如 家里 / 学校 / 图书馆
+      - name: isDefault
+        label: 设为默认地点
+        widget: boolean
+        default: false
+        hint: 动态里没选地点时，自动用这个地点

@@ -1,0 +1,3 @@
+# 后台「动态地点」的存放目录：每个地点一个 JSON（<key>.json）
+# 例如 home.json → { "key": "home", "name": "家里", "isDefault": true }
+# 本文件只用来占位，让空目录能被 git 保存；地点条目请在 /admin/ 里添加。
