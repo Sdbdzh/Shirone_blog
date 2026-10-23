@@ -116,8 +116,13 @@ collections:
         required: false
         hint: Iconify 名称，如 material-symbols:sentiment-excited-outline-rounded
       - { name: tags, label: 标签, widget: list, required: false, default: [] }
+      - name: imageUrls
+        label: 图片链接（批量粘贴）
+        widget: text
+        required: false
+        hint: 一次把整批链接粘进来：一行一个，也可以用空格或逗号分隔；保存后自动变成动态的图片，不用逐张加。
       - name: images
-        label: 图片
+        label: 图片（需要单独写说明时才用）
         widget: list
         required: false
         default: []

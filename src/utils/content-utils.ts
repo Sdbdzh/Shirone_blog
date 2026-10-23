@@ -260,6 +260,26 @@ export async function getSortedMoments(): Promise<MomentItem[]> {
 			const { code } = await renderer.render(entry.body ?? "", {
 				frontmatter: entry.data as unknown as Record<string, unknown>,
 			});
+
+			// 批量粘贴的图片链接（换行/空格/逗号分隔）→ 追加到 images 末尾；
+			// 与逐张填写的 images 自动去重（相册 photoUrls 的同款机制）。
+			const inlineUrls = (entry.data.imageUrls ?? "")
+				.split(/[\s,，、]+/)
+				.map((item) => item.trim())
+				.filter(Boolean);
+			const known = new Set(entry.data.images.map((image) => image.src));
+			const extra = inlineUrls
+				.filter((src) => {
+					if (known.has(src)) return false;
+					known.add(src);
+					return true;
+				})
+				.map((src, index) => ({
+					src,
+					alt: `Photo ${index + 1}`,
+				}));
+			const images = [...entry.data.images, ...extra];
+
 			return {
 				id: entry.id,
 				published: new Date(entry.data.published).toISOString(),
@@ -268,7 +288,7 @@ export async function getSortedMoments(): Promise<MomentItem[]> {
 				location: entry.data.location || getDefaultMomentLocation(),
 				mood: entry.data.mood,
 				tags: entry.data.tags,
-				images: entry.data.images.map(withMomentThumbnails),
+				images: images.map(withMomentThumbnails),
 			} satisfies MomentItem;
 		}),
 	);
