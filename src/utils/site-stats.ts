@@ -5,6 +5,7 @@
  */
 import { render } from "astro:content";
 import { seriesConfig } from "../config/seriesConfig.ts";
+import { siteConfig } from "../config/siteConfig.ts";
 import {
 	getCategoryList,
 	getSeriesCatalog,
@@ -22,7 +23,7 @@ export interface SiteStats {
 	series: number;
 	/** 全部文章 remark 字数之和 */
 	words: number;
-	/** 运行天数：以最早一篇文章的发布日为起点（无文章则 0） */
+	/** 运行天数：优先取 siteConfig.siteSince；未配置时回退为最早一篇文章的发布日（无文章则 0） */
 	days: number;
 	/** 最近更新：全站最新一篇的发布/更新日（ISO 字符串；无文章为 null） */
 	lastActivity: string | null;
@@ -59,6 +60,17 @@ export async function getSiteStats(): Promise<SiteStats> {
 		latestActivity = Math.max(latestActivity, published, updated);
 	}
 
+	// 站点起点：显式配置的 siteSince 优先（含动态/无文章阶段），
+	// 否则回退为最早一篇文章的发布日；两者都无时 days = 0。
+	const siteSince = siteConfig.siteSince
+		? new Date(siteConfig.siteSince).getTime()
+		: Number.NaN;
+	const daysFrom =
+		Number.isFinite(siteSince) &&
+		(!Number.isFinite(earliest) || siteSince <= earliest)
+			? siteSince
+			: earliest;
+
 	cache = {
 		posts: posts.length,
 		moments: moments.length,
@@ -67,8 +79,8 @@ export async function getSiteStats(): Promise<SiteStats> {
 		/** 系列实体数（功能关闭时为 0，SiteStats 不产出该行） */
 		series: seriesCatalog?.size ?? 0,
 		words,
-		days: Number.isFinite(earliest)
-			? Math.max(0, Math.floor((Date.now() - earliest) / DAY_MS))
+		days: Number.isFinite(daysFrom)
+			? Math.max(0, Math.floor((Date.now() - daysFrom) / DAY_MS))
 			: 0,
 		lastActivity:
 			latestActivity > 0 ? new Date(latestActivity).toISOString() : null,

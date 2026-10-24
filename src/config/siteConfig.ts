@@ -11,6 +11,8 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  */
 export const siteConfig: SiteConfig = withUserConfig("site", {
 	site: "https://blog-enik.de5.net/",
+	// 站点上线日：作为侧栏「运行天数」的统计起点
+	siteSince: "2026-10-16",
 	base: "/",
 	title: "This is Enik's blog.",
 	subtitle: "A Material 3 anime blog",
